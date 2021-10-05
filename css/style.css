@@ -2,7 +2,12 @@ table {
         margin-left: auto;
         margin-right: auto;
         background-color: rgb(199, 204, 209);
+        height: 400px;
+        width: 400px;
+
 }
+.cell {width:30px; height:30px;text-align: center}
+/* .cell img {width:25px; height:auto} */
 
 h1 {
     color: red;
@@ -15,6 +20,33 @@ h1 span {
     color: royalblue;
 }
 
+
+h2 {
+    text-align: center;
+}
+
 /* .mine {
     display: none;
 } */
+
+
+h3 {
+    text-align: center;
+}
+
+.board td:hover {
+    background-color: lightsalmon;
+}
+
+
+button {
+    color: brown;
+    background-color: greenyellow;
+    border-radius: 50%;
+    font-size: 20px;
+}
+
+.timer {
+    text-align: center;
+    font-size: 20px;
+}

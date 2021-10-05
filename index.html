@@ -11,9 +11,32 @@
 </head>
 
 <body onload="initGame()">
-    <h1>Minesweeper game <span></span></h1>
-    <h2></h2>
-    <table class="board" border="1" cellpadding="20"></table>
+
+
+    <h1><span class="life"></span> Minesweeper game <span class="mines"></span></h1>
+    <h2 onclick="initGame()"></h2>
+    <h3><button onclick="chooseSize(this)">begginer</button><button onclick="chooseSize(this)" </button>Medium<button onclick="chooseSize(this)">Expert</button></h3>
+    <!-- <div oncontextmenu="myFunction(event)"> -->
+        <table class="board" border="1" cellpadding="20"></table>
+        <!-- <script>
+            function renderCell(i, j, FLAG) {
+                var elCell = document.querySelector(`[data-i="${i}"][data-j="${j}"]`);
+                // console.log('elCell', elCell);
+                elCell.innerText = value;
+                console.log(elCell.classList)
+                // elCell.classList.remove('occupied');
+
+            }
+        </script>
+    </div>
+    <script>
+        function myFunction(e) {
+            e.preventDefault();
+            //do something differant context menu
+            alert("You right-clicked inside the div!");
+        }
+    </script> -->
+    <h4 class="timer"></h4>
 </body>
 
 </html>
