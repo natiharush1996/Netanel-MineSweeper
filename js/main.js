@@ -3,7 +3,8 @@ const MINE = '💣';
 const FLAG = '🚩';
 const SMILE = '😏';
 const SAD = '😔';
-var flagsCount = 0;
+const WIN = '🤑';
+var gcountCells;
 var gBoard;
 var gNeighborsCount;
 // var firstTimeCount = 0;
@@ -40,6 +41,7 @@ function createMat(ROWS, COLS) {
 
 
 function initGame() {
+    gGame.isOn = true;
     startTimer();
     var elh2 = document.querySelector('h2');
     elh2.innerText = SMILE;
@@ -95,7 +97,7 @@ function renderBoard(board) {
             if (currCell.isMarked) {
                 className += ' mark ';
             }
-            strHtml += `<td data-i="${i}" data-j="${j}" class="cell ${className}" onClick="cellClicked(this, ${i}, ${j})"  oncontextmenu="myFunction(event, ${i}, ${j})">`
+            strHtml += `<td data-i="${i}" data-j="${j}" class="cell ${className}" onClick="cellClicked(this, ${i}, ${j})"  oncontextmenu="myFunction(this, event, ${i}, ${j})">`
             if (currCell.isMine) {
                 strHtml += ''
             }
@@ -109,48 +111,56 @@ function renderBoard(board) {
 
 
 function cellClicked(elCell, i, j) {
-    var gNeighborsCount = countNeighbors(i, j, gBoard);
-    // console.log(gNeighborsCount)
-    var cell = gBoard[i][j];
-    console.log('cell ' + i + ',' + j);
-    cell.minesAroundCount = gNeighborsCount
-    console.log(cell.minesAroundCount);
-    // oncontextmenu="myFunction(event)";
-    // while (myFunction()) {
-    //     renderCell(i, j, FLAG)
-    // }
-    var elFlag = document.querySelector(`[data-i="${i}"][data-j="${j}"]`);
-    if (elFlag.innerText !== FLAG) {
-        console.log('diffffffffff')
-
-        if (!cell.isMine) {
-            renderCell(i, j, gNeighborsCount);
-        } else {
-            gLevel.life--;
-            if (gLevel.life > 0) {
-                renderLife(gLevel.life);
-                renderCell(i, j, MINE)
-            } else {
-                renderLife(gLevel.life);
-                renderCell(i, j, MINE)
-                gameOver();
-                // openCells()
+    if (gGame.isOn === true) {
+        var gNeighborsCount = countNeighbors(i, j, gBoard);
+        // console.log(gNeighborsCount)
+        var cell = gBoard[i][j];
+        console.log('cell ' + i + ',' + j);
+        cell.minesAroundCount = gNeighborsCount
+        // console.log(cell.minesAroundCount);
+        if (!checkForWin()) {
+            if (elCell.innerText !== FLAG) {
+                if (!cell.isMine) {
+                    if (gNeighborsCount === 0) {
+                        renderZeroNegs(i, j, gBoard);
+                    } else {
+                        renderCell(i, j, gNeighborsCount);
+                    }
+                } else {
+                    if (elCell.innerText === '') {
+                        gLevel.life--;
+                        elCell.classList.add('mineCell');
+                        if (gLevel.life > 0) {
+                            renderLife(gLevel.life);
+                            renderCell(i, j, MINE)
+                        } else {
+                            renderLife(gLevel.life);
+                            renderCell(i, j, MINE)
+                            stopTimer();
+                            gameOverForLose();
+                        }
+                    }
+                }
             }
+        } else {
+            renderLife(gLevel.life);
+            renderCell(i, j, gNeighborsCount)
+            stopTimer();
+            gameOverForWin();
         }
     }
-    // if (elCell.classList.contains('mine')) {
-    //     renderCell(i, j, '')
-    // }
 }
 
 
-function openCells() {
-    {
-        for (var i = i - 1; i <= i + 1; i++) {
-            if (i < 0 || i >= mat.length) continue;
-            for (var j = j - 1; j <= j + 1; j++) {
-                if (j < 0 || j >= mat[i].length) continue;
-                if (i === i && j === j) continue;
+function renderZeroNegs(cellI, cellJ, mat) {
+    for (var i = cellI - 1; i <= cellI + 1; i++) {
+        if (i < 0 || i >= mat.length) continue;
+        for (var j = cellJ - 1; j <= cellJ + 1; j++) {
+            if (j < 0 || j >= mat[i].length) continue;
+            var gNeighborsCount = countNeighbors(i, j, gBoard);
+            if (mat[i][j].isMine) {
+                renderCell(i, j, MINE)
+            } else {
                 renderCell(i, j, gNeighborsCount)
             }
         }
@@ -159,16 +169,56 @@ function openCells() {
 
 
 
+function checkForWin() {
+    gcountCells = 0;
+    for (var i = 0; i < gBoard.length; i++) {
+        for (var j = 0; j < gBoard[i].length; j++) {
+            var elCell = document.querySelector(`[data-i="${i}"][data-j="${j}"]`);
+            // console.log(elCell.innerText)
+            if (elCell.innerText !== '') {
+                gcountCells++
+                console.log(gcountCells);
+            }
+        }
+    } if ((gcountCells === (gLevel.size * gLevel.size) - 1)) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
-function gameOver() {
+
+
+function gameOverForLose() {
+    gGame.isOn = false;
     stopTimer();
+    for (var i = 0; i < gBoard.length; i++) {
+        for (var j = 0; j < gBoard[i].length; j++) {
+            if (gBoard[i][j].isMine) {
+                renderCell(i, j, MINE);
+                elCell = document.querySelector(`[data-i="${i}"][data-j="${j}"]`)
+                elCell.classList.add('mineCell');
+            }
+        }
+    }
     var strHtml = '';
     strHtml += `<button class="resBtn" onClick="initGame()">${SAD}</button>`;
     elh2 = document.querySelector('h2');
     elh2.innerHTML = strHtml;
     gLevel.life = lifes;
+
 }
 
+
+function gameOverForWin() {
+    gGame.isOn = false;
+    stopTimer();
+    var strHtml = '';
+    strHtml += `<button class="resBtn" onClick="initGame()">${WIN}</button>`;
+    elh2 = document.querySelector('h2');
+    elh2.innerHTML = strHtml;
+    gLevel.life = lifes;
+}
 
 
 
@@ -180,7 +230,6 @@ function renderCell(i, j, value) {
     // elCell.classList.remove('occupied');
 
 }
-
 
 
 function renderLife(gLife) {
@@ -242,8 +291,6 @@ function getRandomIntInclusive(min, max) {
 
 
 
-
-
 function startTimer() {
     var startTime = Date.now();
     updateTimer(startTime);
@@ -256,17 +303,24 @@ function updateTimer(startTime) {
         elTimer.innerText = seconds;
     }, 100);
 }
+
+
 function stopTimer() {
     clearInterval(gInterval);
 }
 
 
 
-
-function myFunction(e, i, j) {
+function myFunction(elCell, e, i, j) {
     e.preventDefault();
     //do something differant context menu
-    renderCell(i, j, FLAG)
+    if (gGame.isOn === true) {
+        if (elCell.innerText === FLAG) {
+            renderCell(i, j, '');
+        } else {
+            renderCell(i, j, FLAG)
+        }
+    }
 
 }
 

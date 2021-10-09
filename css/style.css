@@ -4,21 +4,21 @@ body {
 
 
 table {
-        margin-left: auto;
-        margin-right: auto;
-        background-color: rgb(3, 40, 77);
-        height: 400px;
-        width: 400px;
-
+    margin-left: auto;
+    margin-right: auto;
+    background-color: rgb(3, 40, 77);
+    height: 400px;
+    width: 400px;
+    table-layout:fixed;
+    overflow: hidden;
 }
 .cell {
-    width:30px;
-    height:30px;
+    width: 30px;
+    height: 30px;
     text-align: center;
     color: yellow;
 }
 
-/* .cell img {width:25px; height:auto} */
 
 h1 {
     color: red;
@@ -36,10 +36,6 @@ h2 {
     text-align: center;
 }
 
-/* .mine {
-    display: none;
-} */
-
 
 h3 {
     text-align: center;
@@ -49,6 +45,10 @@ h3 {
     background-color: lightsalmon;
 }
 
+.board td {
+    height: 30px;
+    width: 30px;
+}
 
 button {
     color: brown;
@@ -62,4 +62,8 @@ button {
     font-size: 40px;
     color: red;
     
+}
+
+.mineCell {
+    background-color: red;
 }
